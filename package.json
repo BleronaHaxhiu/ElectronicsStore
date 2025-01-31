@@ -4,12 +4,10 @@
   "version": "1.0.0",
   "description": "Ecommerce App",
   "main": "app.js",
-  
   "scripts": {
     "start": "node backend/app.js",
     "dev": " cross-env NODE_ENV=DEVELOPMENT nodemon backend/app.js",
     "prod": " cross-env NODE_ENV=PRODUCTION nodemon backend/app.js"
- 
   },
   "author": "Blerona Haxhiu",
   "license": "ISC",
@@ -17,6 +15,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "mongodb": "^6.13.0",
     "mongoose": "^8.9.5"
   },
   "devDependencies": {
