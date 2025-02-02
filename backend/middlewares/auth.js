@@ -1,5 +1,5 @@
-import catchAsyncErrors from "./catchAsyncErrors";
-import ErrorHandler from "../utils/errorHandler";
+import catchAsyncErrors from "./catchAsyncErrors.js"; 
+import ErrorHandler from "../utils/errorHandler.js";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 
@@ -15,3 +15,13 @@ export const isAuthenticatedUser = catchAsyncErrors(async (req,res,next) => {
    req.user = await UserActivation.findById(decoded.id)
    next();
 });
+
+//Authorize user roloes
+export const authorizeRoles = (...roles ) =>{
+   return (req,res,next) => {
+      if(!roles.includes(req.user.role)){
+         return next(new ErrorHandler(`Role (${req.user.role})is not allowed to access this resource`,403));
+      }
+      next();
+};
+};
