@@ -24,11 +24,11 @@ const productSchema = new mongoose.Schema({
         public_id:
         {
             type:String,
-            required:True,
+            required:true,
         },
         url:{
             type:String,
-            required:True,
+            required:true,
         },
     },
     ],
@@ -41,7 +41,7 @@ const productSchema = new mongoose.Schema({
                 "Laptops",
                 "Electronics",
                 "Cameras",
-                "Accesories",
+                "Accessories",
                 "Headphones",   
                 "Food",
                 "Books",
@@ -74,11 +74,11 @@ const productSchema = new mongoose.Schema({
         },
         rating:{
             type:Number,
-            required:True,
+            required:true,
         },
         comment:{
             type:String,
-            required:True,
+            required:true,
         },
         },
     ],
