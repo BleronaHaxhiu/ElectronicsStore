@@ -1,5 +1,6 @@
 import catchAsyncErrors from '../middlewares/catchAsyncErrors.js'
 import User from '../models/user.js'
+import {getResetPasswordTemplate} from "../utils/emailTemplates.js"
 import ErrorHandler from '../utils/errorHandler.js'
 import sendToken from '../utils/sendToken.js';
 import sendEmail from '../utils/errorHandler.js'
@@ -129,4 +130,100 @@ const resetPasswordToken = crypto
 
     sendToken(user,200,res);
 
+});
+
+//Get current user profile => /api/v1/me
+export const getUserProfile= catchAsyncErrors(async (req,res,next)  => {
+        const user = await User.findById(req?.user?._id);
+
+        res.status(200).json({
+
+            user,
+        });
+});
+
+//Update password => /api/v1/password/update
+export const updatePassword = catchAsyncErrors(async (req,res,next)  => {
+    const user = await User.findById(req?.user?._id).select("+password");
+
+    //check the previous user password
+    const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+
+    if(!isPasswordMatched){
+        return next(new ErrorHandler('Old password is incorrect',400))
+    }
+    user.password = req.body.password;
+    user.save();
+
+    res.status(200).json({
+        success : true,
+    });
+});
+
+
+//Update user profile => /api/v1/me/update
+export const updateProfile = catchAsyncErrors(async (req,res,next)  => {
+    
+    const newUserData = {
+        name: req.body.name,
+        email: req.body.email
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, newUserData, {new:true})
+
+    res.status(200).json({
+        user,
+    });
+});
+
+//Get all users -- ADMIN  => /api/v1/admin/users
+export const allUsers = catchAsyncErrors(async (req,res,next)  => {
+    const users = await User.find();
+
+    res.status(200).json({
+        users,
+    });
+});
+
+//Get user details -- ADMIN  => /api/v1/admin/users/:id
+export const getUserDetails = catchAsyncErrors(async (req,res,next)  => {
+    const user = await User.findById(req.params.id);
+
+    if(!user){
+        return next(new ErrorHandler(`User not found with id: ${req.params.id}, 404`));
+    }
+    res.status(200).json({
+        user,
+    });
+});
+
+//Update user details --ADMIN /api/v1/admin/update/:id
+export const updateUser = catchAsyncErrors(async (req,res,next)  => {
+    
+    const newUserData = {
+        name: req.body.name,
+        email: req.body.email,
+        role: req.body.role
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, newUserData, {new:true})
+
+    res.status(200).json({
+        user,
+    });
+});
+
+//Delete user -- ADMIN  => /api/v1/admin/users/:id
+export const deleteUser = catchAsyncErrors(async (req,res,next)  => {
+    const user = await User.findById(req.params.id);
+
+    if(!user){
+        return next(new ErrorHandler(`User not found with id: ${req.params.id}, 404`));
+    }
+    // TO DO , remove user avatar from cloudinary (later)
+    await user.deleteOne();
+
+    res.status(200).json({
+        success: true,
+    });
 });
